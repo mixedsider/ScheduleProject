@@ -70,7 +70,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     @Override
     public ScheduleResponseDto findScheduleById(Long id) {
-        Schedule schedule = scheduleRepository.findScheduleByIdIrElseThrow(id);
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
         return new ScheduleResponseDto(schedule);
     }
 
@@ -102,7 +102,7 @@ public class ScheduleServiceImpl implements ScheduleService{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
         }
 
-        schedule = scheduleRepository.findScheduleByIdIrElseThrow(id);
+        schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
 
         return new ScheduleResponseDto(schedule);
     }
@@ -124,17 +124,17 @@ public class ScheduleServiceImpl implements ScheduleService{
         }
     }
 
-    private Schedule createSchedule(String todo, String author, String password) {
+    private Schedule createSchedule(String todo, Long author, String password) {
         return Schedule.builder()
                 .todo(todo)
-                .author(author)
+                .authorId(author)
                 .password(password)
                 .build();
     }
 
     // 비밀번호 유효성 검사
     private void isPasswordValid(Long id, String password) {
-        Schedule schedule = scheduleRepository.findScheduleByIdIrElseThrow(id);
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
 
         if( !schedule.getPassword().equals(password) ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request.");
