@@ -111,6 +111,10 @@ public class ScheduleServiceImpl implements ScheduleService{
     public void deleteSchedule(Long id, ScheduleRequestDto dto) {
         int deleteRow = 0;
 
+        if( dto.getTodo() != null || dto.getAuthor() != null ) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request.");
+        }
+
         isPasswordValid(id, dto.getPassword());
 
         deleteRow = scheduleRepository.deleteSchedule(id);

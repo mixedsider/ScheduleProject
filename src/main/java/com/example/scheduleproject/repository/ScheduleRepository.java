@@ -3,7 +3,6 @@ package com.example.scheduleproject.repository;
 import com.example.scheduleproject.dto.ScheduleResponseDto;
 import com.example.scheduleproject.entity.Schedule;
 
-import java.util.Date;
 import java.sql.Timestamp;
 import java.util.List;
 

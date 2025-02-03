@@ -1,18 +1,16 @@
 package com.example.scheduleproject.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 
 @Getter
-@Builder
-@AllArgsConstructor
-public class Schedule {
+public class Author {
     Long id;
-    Long authorId;
-    String todo;
+    String name;
+    String email;
+    String password;
     Timestamp createdAt;
     Timestamp updatedAt;
 }

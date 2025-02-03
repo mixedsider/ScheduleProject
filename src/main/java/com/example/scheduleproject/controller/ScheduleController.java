@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/schedules")
 @AllArgsConstructor
 public class ScheduleController {
 
@@ -21,14 +21,14 @@ public class ScheduleController {
 
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    @PostMapping("/schedules")
+    @PostMapping("")
     public ResponseEntity<ScheduleResponseDto> saveSchedule(
             @RequestBody ScheduleRequestDto dto
     ) {
         return new ResponseEntity<>(scheduleService.saveSchedule(dto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/schedules")
+    @GetMapping("")
     public ResponseEntity<List<ScheduleResponseDto>> findSchedules(
             @RequestParam(required = false) String author,
             @RequestParam(required = false) String updatedAt
@@ -51,14 +51,14 @@ public class ScheduleController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/schedules/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> findScheduleById(
             @PathVariable Long id
     ) {
         return new ResponseEntity<>(scheduleService.findScheduleById(id), HttpStatus.OK);
     }
 
-    @PatchMapping("/schedules/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> patchSchedule(
             @PathVariable Long id,
             @RequestBody ScheduleRequestDto dto
@@ -66,7 +66,7 @@ public class ScheduleController {
         return new ResponseEntity<>(scheduleService.patchSchedule(id, dto), HttpStatus.OK);
     }
 
-    @DeleteMapping("/schedules/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSchedule(
             @PathVariable Long id,
             @RequestBody ScheduleRequestDto dto
