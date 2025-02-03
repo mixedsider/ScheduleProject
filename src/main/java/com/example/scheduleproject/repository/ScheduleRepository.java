@@ -1,4 +1,23 @@
 package com.example.scheduleproject.repository;
 
-public class ScheduleRepository {
+import com.example.scheduleproject.dto.ScheduleResponseDto;
+import com.example.scheduleproject.entity.Schedule;
+
+import java.util.Date;
+import java.sql.Timestamp;
+import java.util.List;
+
+public interface ScheduleRepository {
+
+    ScheduleResponseDto saveSchedule(Schedule schedule);
+
+    List<ScheduleResponseDto> findAllSchedules();
+
+    List<ScheduleResponseDto> findSchedulesByAuthor(String author);
+
+    List<ScheduleResponseDto> findSchedulesByUpdatedAt(Timestamp date);
+
+    List<ScheduleResponseDto> findSchedulesByAuthorAndUpdatedAt(String author, Timestamp updatedAt);
+
+    Schedule findScheduleByIdIrElseThrow(Long id);
 }
