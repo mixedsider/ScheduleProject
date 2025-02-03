@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,13 +24,12 @@ public class ScheduleController {
     @PostMapping("/schedules")
     public ResponseEntity<ScheduleResponseDto> saveSchedule(
             @RequestBody ScheduleRequestDto dto
-            )
-    {
+    ) {
         return new ResponseEntity<>(scheduleService.saveSchedule(dto), HttpStatus.CREATED);
     }
 
     @GetMapping("/schedules")
-    public ResponseEntity<List<ScheduleResponseDto>> findAllSchedules(
+    public ResponseEntity<List<ScheduleResponseDto>> findSchedules(
             @RequestParam(required = false) String author,
             @RequestParam(required = false) String updatedAt
     ) {
@@ -56,8 +54,24 @@ public class ScheduleController {
     @GetMapping("/schedules/{id}")
     public ResponseEntity<ScheduleResponseDto> findScheduleById(
             @PathVariable Long id
-            )
-    {
+    ) {
         return new ResponseEntity<>(scheduleService.findScheduleById(id), HttpStatus.OK);
+    }
+
+    @PatchMapping("/schedules/{id}")
+    public ResponseEntity<ScheduleResponseDto> patchSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto dto
+    ) {
+        return new ResponseEntity<>(scheduleService.patchSchedule(id, dto), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/schedules/{id}")
+    public ResponseEntity<Void> deleteSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto dto
+    ) {
+        scheduleService.deleteSchedule(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

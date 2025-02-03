@@ -86,6 +86,26 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         );
     }
 
+    @Override
+    public int updateTodo(Long id, String todo) {
+        return jdbcTemplate.update("UPDATE schedule SET todo = ? WHERE id = ?", todo, id);
+    }
+
+    @Override
+    public int updateAuthor(Long id, String author) {
+        return jdbcTemplate.update("UPDATE schedule SET author = ? WHERE id = ?", author, id);
+    }
+
+    @Override
+    public int updateSchedule(Long id, String author, String todo) {
+        return jdbcTemplate.update("UPDATE schedule SET author = ?, todo = ? WHERE id = ?", author, todo, id);
+    }
+
+    @Override
+    public int deleteSchedule(Long id) {
+        return jdbcTemplate.update("DELETE FROM schedule WHERE id = ?", id);
+    }
+
     private List<ScheduleResponseDto> schedulesToResponseDtos(List<Schedule> schedules) {
         return schedules.stream()
                 .map(ScheduleResponseDto::new)

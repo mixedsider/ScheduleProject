@@ -20,4 +20,12 @@ public interface ScheduleRepository {
     List<ScheduleResponseDto> findSchedulesByAuthorAndUpdatedAt(String author, Timestamp updatedAt);
 
     Schedule findScheduleByIdIrElseThrow(Long id);
+
+    int updateTodo(Long id, String todo);
+
+    int updateAuthor(Long id, String author);
+
+    int updateSchedule(Long id, String author, String todo);
+
+    int deleteSchedule(Long id);
 }
