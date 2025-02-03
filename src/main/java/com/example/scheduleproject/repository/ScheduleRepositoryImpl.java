@@ -36,12 +36,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         jdbcInsert
                 .withTableName("schedule")
                 .usingGeneratedKeyColumns("id")
-                .usingColumns("todo", "author", "password");
+                .usingColumns("todo", "authorId");
 
         Map<String, Object> paramaters = new HashMap<>();
         paramaters.put("todo", schedule.getTodo());
-        paramaters.put("author", schedule.getAuthor());
-        paramaters.put("password", schedule.getPassword());
+        paramaters.put("author", schedule.getAuthorId());
 
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(paramaters));
 
@@ -118,9 +117,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
             public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new Schedule(
                         rs.getLong("id"),
+                        rs.getLong("authorId"),
                         rs.getString("todo"),
-                        rs.getString("author"),
-                        rs.getString("password"),
                         rs.getTimestamp("createdAt"),
                         rs.getTimestamp("updatedAt")
                 );
