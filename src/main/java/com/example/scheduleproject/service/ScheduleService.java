@@ -18,4 +18,8 @@ public interface ScheduleService {
     List<ScheduleResponseDto> findSchedulesByAuthorAndUpdatedAt(String author, String updatedAt);
 
     ScheduleResponseDto findScheduleById(Long id);
+
+    ScheduleResponseDto patchSchedule(Long id, ScheduleRequestDto dto);
+
+    void deleteSchedule(Long id, ScheduleRequestDto dto);
 }
