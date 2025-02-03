@@ -1,7 +1,6 @@
 ### ERD
 
-![image](https://github.com/user-attachments/assets/5e28a1eb-c690-4c97-8513-3e8f0fdbeb73)
-
+![image](https://github.com/user-attachments/assets/c4f0ba93-6eb5-4c3b-b500-538fe74c4364)
 
 https://www.erdcloud.com/p/JFCDyFXME4XfdTKAc
 
