@@ -44,7 +44,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(paramaters));
 
-        Schedule resultSchedule = findScheduleByIdIrElseThrow(key.longValue());
+        Schedule resultSchedule = findScheduleByIdOrElseThrow(key.longValue());
 
         return new ScheduleResponseDto(resultSchedule);
     }
@@ -78,7 +78,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public Schedule findScheduleByIdIrElseThrow(Long id) {
+    public Schedule findScheduleByIdOrElseThrow(Long id) {
         List<Schedule> result = jdbcTemplate.query("SELECT * FROM schedule WHERE id = ?", scheduleRowMapper(), id);
         return result.stream().findAny().orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exists id = " + id)

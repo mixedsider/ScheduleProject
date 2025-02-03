@@ -18,7 +18,7 @@ public interface ScheduleRepository {
 
     List<ScheduleResponseDto> findSchedulesByAuthorAndUpdatedAt(String author, Timestamp updatedAt);
 
-    Schedule findScheduleByIdIrElseThrow(Long id);
+    Schedule findScheduleByIdOrElseThrow(Long id);
 
     int updateTodo(Long id, String todo);
 
