@@ -4,22 +4,23 @@ import com.example.scheduleproject.dto.ScheduleResponseDto;
 import com.example.scheduleproject.dto.ScheduleRequestDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ScheduleService {
 
     ScheduleResponseDto saveSchedule(ScheduleRequestDto dto);
 
-    List<ScheduleResponseDto> findAllSchedules();
+    Map<String, Object> findAllSchedules(int page, int size);
 
-    List<ScheduleResponseDto> findSchedulesByAuthor(String author);
+    Map<String, Object> findSchedulesByAuthor(String author, int page, int size);
 
-    List<ScheduleResponseDto> findSchedulesByUpdatedAt(String updatedAt);
+    Map<String, Object> findSchedulesByUpdatedAt(String updatedAt, int page, int size);
 
-    List<ScheduleResponseDto> findSchedulesByAuthorAndUpdatedAt(String author, String updatedAt);
+    Map<String, Object> findSchedulesByAuthorAndUpdatedAt(String author, String updatedAt, int page, int size);
 
     ScheduleResponseDto findScheduleById(Long id);
 
-    ScheduleResponseDto patchSchedule(Long id, ScheduleRequestDto dto);
+    ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto dto);
 
     void deleteSchedule(Long id, ScheduleRequestDto dto);
 }

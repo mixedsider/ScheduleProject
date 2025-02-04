@@ -2,6 +2,7 @@ package com.example.scheduleproject.service;
 
 import com.example.scheduleproject.dto.ScheduleRequestDto;
 import com.example.scheduleproject.dto.ScheduleResponseDto;
+import com.example.scheduleproject.entity.Author;
 import com.example.scheduleproject.entity.Schedule;
 import com.example.scheduleproject.repository.ScheduleRepository;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -23,28 +25,45 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     private final ScheduleRepository scheduleRepository;
 
+    private final AuthorService authorService;
+
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
-    public ScheduleResponseDto saveSchedule(ScheduleRequestDto dto) {
+    public ScheduleResponseDto saveSchedule(ScheduleRequestDto requestDto) {
 
-        Schedule schedule = createSchedule(dto.getTodo(), dto.getAuthor(), dto.getPassword());
+        Long authorId = isPasswordValid(requestDto.getAuthor(), requestDto.getPassword());
 
-        return scheduleRepository.saveSchedule(schedule);
+        ScheduleResponseDto responseDto = scheduleRepository.saveSchedule(new Schedule(requestDto.getTodo(), authorId));
+        responseDto.setAuthor(authorService.findAuthorNameById(authorId));
+
+        return responseDto;
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedules() {
-        return scheduleRepository.findAllSchedules();
+    public Map<String, Object> findAllSchedules(int page, int size) {
+        return scheduleRepository.findAllSchedules(page, size);
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByAuthor(String author) {
-        return scheduleRepository.findSchedulesByAuthor(author);
+    public Map<String, Object> findSchedulesByAuthor(String author, int page, int size) {
+        return scheduleRepository.findSchedulesByAuthor(author, page, size);
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByUpdatedAt(String updatedAt) {
+    public Map<String, Object> findSchedulesByUpdatedAt(String updatedAt, int page, int size) {
+        Date date;
+        try {
+            date = dateFormat.parse(updatedAt);
+        } catch (ParseException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This is not the correct format.");
+        }
+
+        return scheduleRepository.findSchedulesByUpdatedAt(new Timestamp(date.getTime()), page, size);
+    }
+
+    @Override
+    public Map<String, Object> findSchedulesByAuthorAndUpdatedAt(String author, String updatedAt, int page, int size) {
         Date date;
         try {
             date = dateFormat.parse(updatedAt);
@@ -52,88 +71,64 @@ public class ScheduleServiceImpl implements ScheduleService{
         } catch (ParseException e ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This is not the correct format.");
         }
-
-        return scheduleRepository.findSchedulesByUpdatedAt(new Timestamp(date.getTime()));
+        return scheduleRepository.findSchedulesByAuthorAndUpdatedAt(author, new Timestamp(date.getTime()), page, size);
     }
 
-    @Override
-    public List<ScheduleResponseDto> findSchedulesByAuthorAndUpdatedAt(String author, String updatedAt) {
-        Date date;
-        try {
-            date = dateFormat.parse(updatedAt);
-
-        } catch (ParseException e ) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This is not the correct format.");
-        }
-        return scheduleRepository.findSchedulesByAuthorAndUpdatedAt(author, new Timestamp(date.getTime()));
-    }
 
     @Override
     public ScheduleResponseDto findScheduleById(Long id) {
-        Schedule schedule = scheduleRepository.findScheduleByIdIrElseThrow(id);
-        return new ScheduleResponseDto(schedule);
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+        ScheduleResponseDto dto = new ScheduleResponseDto(schedule);
+        dto.setAuthor(authorService.findAuthorNameById(schedule.getAuthorId()));
+        return dto;
     }
 
     @Override
     @Transactional
-    public ScheduleResponseDto patchSchedule(Long id, ScheduleRequestDto dto) {
+    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleRequestDto dto) {
         int updateRow = 0;
         Schedule schedule;
 
-        if( dto.getAuthor() == null && dto.getTodo() == null) { // 수정할 데이터가 입력이 안된 경우
+        if( dto.getTodo() == null) { // 수정할 데이터가 입력이 안된 경우
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request.");
         }
 
         // 데이터를 가져와서 비밀번호 비교
-        isPasswordValid(id, dto.getPassword());
+        Long authorId = isPasswordValid(dto.getAuthor(), dto.getPassword());
 
-
-        if( dto.getAuthor() != null && dto.getTodo() != null) { // 작성자 & 할일 바꾸는 경우
-            updateRow = scheduleRepository.updateSchedule(id, dto.getAuthor(), dto.getTodo());
-        }
-        else if ( dto.getAuthor() != null ) { // 작성자만 바꾸는 경우
-            updateRow = scheduleRepository.updateAuthor(id, dto.getAuthor());
-        }
-        else { // 할일만 바꾸는 경우
-            updateRow = scheduleRepository.updateTodo(id,  dto.getTodo());
-        }
+        updateRow = scheduleRepository.updateTodo(scheduleId, authorId, dto.getTodo());
 
         if( updateRow == 0 ) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + scheduleId);
         }
 
-        schedule = scheduleRepository.findScheduleByIdIrElseThrow(id);
+        schedule = scheduleRepository.findScheduleByIdOrElseThrow(scheduleId);
 
         return new ScheduleResponseDto(schedule);
     }
 
     @Override
-    public void deleteSchedule(Long id, ScheduleRequestDto dto) {
+    public void deleteSchedule(Long scheduleId, ScheduleRequestDto dto) {
         int deleteRow = 0;
+        Long authorId;
 
-        isPasswordValid(id, dto.getPassword());
+        if( dto.getTodo() != null ) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request.");
+        }
 
-        deleteRow = scheduleRepository.deleteSchedule(id);
+        authorId = isPasswordValid(dto.getAuthor(), dto.getPassword());
+
+        deleteRow = scheduleRepository.deleteSchedule(scheduleId, authorId);
 
         if( deleteRow == 0 ) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + scheduleId);
         }
-    }
-
-    private Schedule createSchedule(String todo, String author, String password) {
-        return Schedule.builder()
-                .todo(todo)
-                .author(author)
-                .password(password)
-                .build();
     }
 
     // 비밀번호 유효성 검사
-    private void isPasswordValid(Long id, String password) {
-        Schedule schedule = scheduleRepository.findScheduleByIdIrElseThrow(id);
+    private Long isPasswordValid(String name, String password) {
+        Author author = authorService.findAuthorByNameAndPassword(name, password);
 
-        if( !schedule.getPassword().equals(password) ) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request.");
-        }
+        return author.getId();
     }
 }

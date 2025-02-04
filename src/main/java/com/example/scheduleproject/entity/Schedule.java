@@ -1,9 +1,10 @@
 package com.example.scheduleproject.entity;
 
+import com.example.scheduleproject.service.ScheduleService;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.sql.Timestamp;
 
@@ -12,9 +13,14 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class Schedule {
     Long id;
+    Long authorId;
+    @Size(max = 200)
     String todo;
-    String author;
-    String password;
     Timestamp createdAt;
     Timestamp updatedAt;
+
+    public Schedule(String todo, Long authorId) {
+        this.todo = todo;
+        this.authorId = authorId;
+    }
 }

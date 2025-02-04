@@ -3,29 +3,25 @@ package com.example.scheduleproject.repository;
 import com.example.scheduleproject.dto.ScheduleResponseDto;
 import com.example.scheduleproject.entity.Schedule;
 
-import java.util.Date;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 public interface ScheduleRepository {
 
     ScheduleResponseDto saveSchedule(Schedule schedule);
 
-    List<ScheduleResponseDto> findAllSchedules();
+    Map<String, Object> findAllSchedules(int page, int size);
 
-    List<ScheduleResponseDto> findSchedulesByAuthor(String author);
+    Map<String, Object> findSchedulesByAuthor(String author, int page, int size);
 
-    List<ScheduleResponseDto> findSchedulesByUpdatedAt(Timestamp date);
+    Map<String, Object> findSchedulesByUpdatedAt(Timestamp date, int page, int size);
 
-    List<ScheduleResponseDto> findSchedulesByAuthorAndUpdatedAt(String author, Timestamp updatedAt);
+    Map<String, Object> findSchedulesByAuthorAndUpdatedAt(String author, Timestamp updatedAt, int page, int size);
 
-    Schedule findScheduleByIdIrElseThrow(Long id);
+    Schedule findScheduleByIdOrElseThrow(Long id);
 
-    int updateTodo(Long id, String todo);
+    int updateTodo(Long scheduleId, Long authorId, String todo);
 
-    int updateAuthor(Long id, String author);
-
-    int updateSchedule(Long id, String author, String todo);
-
-    int deleteSchedule(Long id);
+    int deleteSchedule(Long scheduleId, Long authorId);
 }
