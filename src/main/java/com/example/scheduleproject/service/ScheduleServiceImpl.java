@@ -17,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -40,17 +41,17 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedules() {
-        return scheduleRepository.findAllSchedules();
+    public Map<String, Object> findAllSchedules(int page, int size) {
+        return scheduleRepository.findAllSchedules(page, size);
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByAuthor(String author) {
-        return scheduleRepository.findSchedulesByAuthor(author);
+    public Map<String, Object> findSchedulesByAuthor(String author, int page, int size) {
+        return scheduleRepository.findSchedulesByAuthor(author, page, size);
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByUpdatedAt(String updatedAt) {
+    public Map<String, Object> findSchedulesByUpdatedAt(String updatedAt, int page, int size) {
         Date date;
         try {
             date = dateFormat.parse(updatedAt);
@@ -59,11 +60,11 @@ public class ScheduleServiceImpl implements ScheduleService{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This is not the correct format.");
         }
 
-        return scheduleRepository.findSchedulesByUpdatedAt(new Timestamp(date.getTime()));
+        return scheduleRepository.findSchedulesByUpdatedAt(new Timestamp(date.getTime()), page, size);
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByAuthorAndUpdatedAt(String author, String updatedAt) {
+    public Map<String, Object> findSchedulesByAuthorAndUpdatedAt(String author, String updatedAt, int page, int size) {
         Date date;
         try {
             date = dateFormat.parse(updatedAt);
@@ -71,7 +72,7 @@ public class ScheduleServiceImpl implements ScheduleService{
         } catch (ParseException e ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This is not the correct format.");
         }
-        return scheduleRepository.findSchedulesByAuthorAndUpdatedAt(author, new Timestamp(date.getTime()));
+        return scheduleRepository.findSchedulesByAuthorAndUpdatedAt(author, new Timestamp(date.getTime()), page, size);
     }
 
 

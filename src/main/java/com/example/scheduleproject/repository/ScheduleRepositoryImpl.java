@@ -3,27 +3,23 @@ package com.example.scheduleproject.repository;
 import com.example.scheduleproject.dto.ScheduleResponseDto;
 import com.example.scheduleproject.entity.Schedule;
 import com.example.scheduleproject.service.AuthorService;
-import com.example.scheduleproject.service.AuthorServiceImpl;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
-import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Repository
 public class ScheduleRepositoryImpl implements ScheduleRepository {
@@ -55,40 +51,157 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedules() {
-        String query =
-                "SELECT s.*, a.name FROM schedule s " +
-                "JOIN author a ON s.authorId = a.id ";
-        return jdbcTemplate.query(query, scheduleResponseDtoRowMapper());
-    }
+    public Map<String, Object> findAllSchedules(int page, int size) {
+        if(page < 1) {
+            page = 1;
+        }
 
-    @Override
-    public List<ScheduleResponseDto> findSchedulesByAuthor(String author) {
+        int offset = (page - 1) * size;
+
         String query =
-                "SELECT s.*, a.name FROM schedule s " +
+                "SELECT s.*, a.name AS author " +
+                "FROM schedule s " +
                 "JOIN author a ON s.authorId = a.id " +
-                "WHERE a.name = ?";
-        return jdbcTemplate.query(query, scheduleResponseDtoRowMapper(), author);
+                "ORDER BY s.id " +
+                "LIMIT ? OFFSET ?";
+
+        List<ScheduleResponseDto> responseDtos = jdbcTemplate.query(
+                query,
+                new Object[]{size, offset},
+                scheduleResponseDtoRowMapper()
+        );
+
+        // 전체 레코드 수 조회 (페이징에 필요한 정보)
+        int totalRecords = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM schedule",
+                Integer.class
+        );
+
+        // 전체 페이지 수 계산 (소수점 올림)
+        int totalPages = (int) Math.ceil((double) totalRecords / size);
+
+        // 결과 응답 Map 구성 (페이징 정보 포함)
+        Map<String, Object> response = new HashMap<>();
+        response.put("schedules", responseDtos);
+        response.put("totalRecords", totalRecords);
+        response.put("totalPages", totalPages);
+        response.put("currentPage", page);
+        response.put("pageSize", size);
+
+        return response;
+    }
+
+
+    @Override
+    public Map<String, Object> findSchedulesByAuthor(String author, int page, int size) {
+        if(page < 1) {
+            page = 1;
+        }
+
+        int offset = (page - 1) * size;
+        String query =
+                "SELECT s.*, a.name AS author FROM schedule s " +
+                "JOIN author a ON s.authorId = a.id " +
+                "WHERE a.name = ? " +
+                "LIMIT ? OFFSET ?";
+
+        List<ScheduleResponseDto> responseDtos = jdbcTemplate.query(
+                query,
+                new Object[]{author, size, offset},
+                scheduleResponseDtoRowMapper()
+        );
+
+        int totalRecords = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM schedule s JOIN author a ON s.authorId = a.id WHERE a.name = ?",
+                Integer.class, author
+        );
+
+        int totalPages = (int) Math.ceil((double) totalRecords / size);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("schedules", responseDtos);
+        response.put("totalRecords", totalRecords);
+        response.put("totalPages", totalPages);
+        response.put("currentPage", page);
+        response.put("pageSize", size);
+
+        return response;
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByUpdatedAt(Timestamp date) {
+    public Map<String, Object> findSchedulesByUpdatedAt(Timestamp date, int page, int size) {
+        if(page < 1) {
+            page = 1;
+        }
+
+        int offset = (page - 1) * size;
+
         String query =
-                "SELECT s.* FROM schedule s " +
+                "SELECT s.*, a.name AS author FROM schedule s " +
                 "JOIN author a ON s.authorId = a.id " +
                 "WHERE DATE(s.updatedAt) <= DATE(?)" +
-                "ORDER BY updatedAt DESC";
-        return jdbcTemplate.query(query, scheduleResponseDtoRowMapper(), date);
+                "ORDER BY updatedAt DESC " +
+                "LIMIT ? OFFSET ?";
+
+        List<ScheduleResponseDto> responseDtos = jdbcTemplate.query(
+                query,
+                new Object[]{date, size, offset},
+                scheduleResponseDtoRowMapper()
+        );
+
+        int totalRecords = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM schedule",
+                Integer.class
+        );
+
+        int totalPages = (int) Math.ceil((double) totalRecords / size);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("schedules", responseDtos);
+        response.put("totalRecords", totalRecords);
+        response.put("totalPages", totalPages);
+        response.put("currentPage", page);
+        response.put("pageSize", size);
+
+        return response;
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByAuthorAndUpdatedAt(String author, Timestamp updatedAt) {
+    public Map<String, Object> findSchedulesByAuthorAndUpdatedAt(String author, Timestamp updatedAt, int page, int size) {
+        if(page < 1) {
+            page = 1;
+        }
+
+        int offset = (page - 1) * size;
+
         String query =
-                "SELECT s.* FROM schedule s " +
+                "SELECT s.*, a.name AS author FROM schedule s " +
                 "JOIN author a ON s.authorId = a.id " +
                 "WHERE a.name = ? AND DATE(s.updatedAt) <= DATE(?)" +
-                "ORDER BY updatedAt DESC";
-        return jdbcTemplate.query(query, scheduleResponseDtoRowMapper(), author, updatedAt);
+                "ORDER BY updatedAt DESC " +
+                "LIMIT ? OFFSET ?";
+
+        List<ScheduleResponseDto> responseDtos = jdbcTemplate.query(
+                query,
+                new Object[]{author, updatedAt, size, offset},
+                scheduleResponseDtoRowMapper()
+        );
+
+        int totalRecords = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM schedule s JOIN author a ON s.authorId = a.id WHERE a.name = ? AND DATE(s.updatedAt) <= DATE(?)",
+                Integer.class, author, updatedAt
+        );
+
+        int totalPages = (int) Math.ceil((double) totalRecords / size);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("schedules", responseDtos);
+        response.put("totalRecords", totalRecords);
+        response.put("totalPages", totalPages);
+        response.put("currentPage", page);
+        response.put("pageSize", size);
+
+        return response;
     }
 
     @Override
