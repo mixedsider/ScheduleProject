@@ -51,7 +51,7 @@ public class AuthorRepositoryImpl implements AuthorRepository{
         return jdbcTemplate.query("SELECT * FROM author WHERE id = ?", authorRowMapper(), id)
                 .stream().findAny()
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "This is not the correct format.")
+                        new NullPointerException("This is not the correct format.")
                 );
     }
 
@@ -72,7 +72,7 @@ public class AuthorRepositoryImpl implements AuthorRepository{
                 .stream()
                 .findAny()
                 .orElseThrow( () ->
-                        new ResponseStatusException(HttpStatus.BAD_REQUEST, "Does not exist id = " + authorId)
+                        new NullPointerException("Does not exist id = " + authorId)
                 );
 
         return author.getAuthor();

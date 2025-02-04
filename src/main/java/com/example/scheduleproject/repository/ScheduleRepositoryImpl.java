@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 
@@ -206,6 +207,13 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public Schedule findScheduleByIdOrElseThrow(Long id) {
+        int totalRecords = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM schedule",
+                Integer.class
+        );
+        if( totalRecords < id ) {
+            throw new InputMismatchException("이미 없거나 삭제된 입력입니다.");
+        }
         String query =
                 "SELECT s.* FROM schedule s " +
                 "WHERE s.id = ?";

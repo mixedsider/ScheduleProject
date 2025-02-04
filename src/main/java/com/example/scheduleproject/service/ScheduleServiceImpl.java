@@ -55,8 +55,7 @@ public class ScheduleServiceImpl implements ScheduleService{
         Date date;
         try {
             date = dateFormat.parse(updatedAt);
-
-        } catch (ParseException e ) {
+        } catch (ParseException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This is not the correct format.");
         }
 
@@ -124,13 +123,6 @@ public class ScheduleServiceImpl implements ScheduleService{
         if( deleteRow == 0 ) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + scheduleId);
         }
-    }
-
-    private Schedule createSchedule(String todo, Long author) {
-        return Schedule.builder()
-                .todo(todo)
-                .authorId(author)
-                .build();
     }
 
     // 비밀번호 유효성 검사
