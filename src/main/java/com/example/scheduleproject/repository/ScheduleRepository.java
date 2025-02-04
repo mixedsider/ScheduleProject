@@ -20,11 +20,7 @@ public interface ScheduleRepository {
 
     Schedule findScheduleByIdOrElseThrow(Long id);
 
-    int updateTodo(Long id, String todo);
+    int updateTodo(Long scheduleId, Long authorId, String todo);
 
-    int updateAuthor(Long id, String author);
-
-    int updateSchedule(Long id, String author, String todo);
-
-    int deleteSchedule(Long id);
+    int deleteSchedule(Long scheduleId, Long authorId);
 }

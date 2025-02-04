@@ -10,6 +10,10 @@ public interface AuthorRepository {
 
     Author findAuthorByIdOrElseThrow(Long id);
 
+    Author findAuthorByNameAndPassword(String name, String password);
+
+    String findAuthorNameById(Long authorId);
+
     int updateName(Long id, AuthorRequestDto dto);
 
     int updateEmail(Long id, AuthorRequestDto dto);

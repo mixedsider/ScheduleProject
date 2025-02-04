@@ -15,7 +15,7 @@ public class AuthorResponseDto {
 
     public AuthorResponseDto(Author author) {
         this.id = author.getId();
-        this.name = author.getName();
+        this.name = author.getAuthor();
         this.email = author.getEmail();
         this.createdAt = author.getCreatedAt();
         this.updatedAt = author.getUpdatedAt();

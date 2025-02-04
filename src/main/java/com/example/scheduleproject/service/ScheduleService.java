@@ -19,7 +19,7 @@ public interface ScheduleService {
 
     ScheduleResponseDto findScheduleById(Long id);
 
-    ScheduleResponseDto patchSchedule(Long id, ScheduleRequestDto dto);
+    ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto dto);
 
     void deleteSchedule(Long id, ScheduleRequestDto dto);
 }

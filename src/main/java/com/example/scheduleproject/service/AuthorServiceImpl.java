@@ -16,7 +16,6 @@ public class AuthorServiceImpl implements AuthorService{
 
     private final AuthorRepository authorRepository;
 
-
     @Override
     public AuthorResponseDto join(AuthorRequestDto dto) {
         if ( // 유효성 검사
@@ -41,6 +40,16 @@ public class AuthorServiceImpl implements AuthorService{
         else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request.");
         }
+    }
+
+    @Override
+    public Author findAuthorByNameAndPassword(String name, String password) {
+        return authorRepository.findAuthorByNameAndPassword(name, password);
+    }
+
+    @Override
+    public String findAuthorNameById(Long id) {
+        return authorRepository.findAuthorNameById(id);
     }
 
     @Override
