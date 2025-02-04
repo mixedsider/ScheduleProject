@@ -41,6 +41,12 @@
 |회원 이름 수정|PATCH|/api/authors/{authorId}|요청 body|수정 정보|200: 정상수정|404: NOT_FOUND, 400: BAD_REQUEST|
 |회원 삭제|DELETE|/api/authors/{authorId}|요청 body|-|200: 정상삭제|400: BAD_REQUEST|
 
+## 환경 변수
+
+    DB_USER={your DB Id)
+    DB_PASSWORD=(your DB password)
+    DB_URL=jdbc:mysql://{your DB URL)
+
 
 ## 프로그램 사용법
 
