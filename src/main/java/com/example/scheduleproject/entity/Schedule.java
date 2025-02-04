@@ -1,5 +1,6 @@
 package com.example.scheduleproject.entity;
 
+import com.example.scheduleproject.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,4 +16,9 @@ public class Schedule {
     String todo;
     Timestamp createdAt;
     Timestamp updatedAt;
+
+    public Schedule(String todo, Long authorId) {
+        this.todo = todo;
+        this.authorId = authorId;
+    }
 }

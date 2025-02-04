@@ -56,6 +56,29 @@ public class AuthorRepositoryImpl implements AuthorRepository{
     }
 
     @Override
+    public Author findAuthorByNameAndPassword(String name, String password) {
+        return jdbcTemplate
+                .query("SELECT * FROM author WHERE name = ? AND password = ?", authorRowMapper(), name, password)
+                .stream()
+                .findAny()
+                .orElseThrow( () ->
+                        new ResponseStatusException(HttpStatus.BAD_REQUEST, "Does not exist name = " + name)
+                );
+    }
+
+    @Override
+    public String findAuthorNameById(Long authorId) {
+        Author author =  jdbcTemplate.query("SELECT * FROM author WHERE id = ?", authorRowMapper(), authorId)
+                .stream()
+                .findAny()
+                .orElseThrow( () ->
+                        new ResponseStatusException(HttpStatus.BAD_REQUEST, "Does not exist id = " + authorId)
+                );
+
+        return author.getAuthor();
+    }
+
+    @Override
     public int updateName(Long id, AuthorRequestDto dto) {
         return jdbcTemplate.update("UPDATE author SET name = ? WHERE id = ?", dto.getName(), id);
     }

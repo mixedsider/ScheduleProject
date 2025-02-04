@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 @RestController
@@ -18,8 +16,6 @@ import java.util.List;
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
-
-    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @PostMapping("")
     public ResponseEntity<ScheduleResponseDto> saveSchedule(
@@ -59,11 +55,11 @@ public class ScheduleController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDto> patchSchedule(
+    public ResponseEntity<ScheduleResponseDto> updateSchedule(
             @PathVariable Long id,
             @RequestBody ScheduleRequestDto dto
     ) {
-        return new ResponseEntity<>(scheduleService.patchSchedule(id, dto), HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.updateSchedule(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
