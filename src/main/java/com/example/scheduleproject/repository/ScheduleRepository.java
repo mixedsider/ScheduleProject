@@ -5,18 +5,19 @@ import com.example.scheduleproject.entity.Schedule;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 public interface ScheduleRepository {
 
     ScheduleResponseDto saveSchedule(Schedule schedule);
 
-    List<ScheduleResponseDto> findAllSchedules();
+    Map<String, Object> findAllSchedules(int page, int size);
 
-    List<ScheduleResponseDto> findSchedulesByAuthor(String author);
+    Map<String, Object> findSchedulesByAuthor(String author, int page, int size);
 
-    List<ScheduleResponseDto> findSchedulesByUpdatedAt(Timestamp date);
+    Map<String, Object> findSchedulesByUpdatedAt(Timestamp date, int page, int size);
 
-    List<ScheduleResponseDto> findSchedulesByAuthorAndUpdatedAt(String author, Timestamp updatedAt);
+    Map<String, Object> findSchedulesByAuthorAndUpdatedAt(String author, Timestamp updatedAt, int page, int size);
 
     Schedule findScheduleByIdOrElseThrow(Long id);
 

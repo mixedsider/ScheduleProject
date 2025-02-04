@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/schedules")
@@ -25,23 +26,25 @@ public class ScheduleController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ScheduleResponseDto>> findSchedules(
+    public ResponseEntity<Map<String, Object>> findSchedules(
             @RequestParam(required = false) String author,
-            @RequestParam(required = false) String updatedAt
+            @RequestParam(required = false) String updatedAt,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        List<ScheduleResponseDto> result;
+        Map<String, Object> result;
 
         if(author != null && updatedAt != null) {
-            result = scheduleService.findSchedulesByAuthorAndUpdatedAt(author, updatedAt);
+            result = scheduleService.findSchedulesByAuthorAndUpdatedAt(author, updatedAt, page, size);
         }
         else if(author != null) {
-            result = scheduleService.findSchedulesByAuthor(author);
+            result = scheduleService.findSchedulesByAuthor(author, page, size);
         }
         else if(updatedAt != null) {
-            result = scheduleService.findSchedulesByUpdatedAt(updatedAt);
+            result = scheduleService.findSchedulesByUpdatedAt(updatedAt, page, size);
         }
         else {
-            result = scheduleService.findAllSchedules();
+            result = scheduleService.findAllSchedules(page, size);
         }
 
         return new ResponseEntity<>(result, HttpStatus.OK);
