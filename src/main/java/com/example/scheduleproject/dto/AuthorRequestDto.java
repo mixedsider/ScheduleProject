@@ -6,10 +6,12 @@ import lombok.Getter;
 
 @Getter
 public class AuthorRequestDto {
-    String name;
+
+    private String name;
+
     @Email
-    String email;
+    private String email;
 
     @NotNull
-    String password;
+    private String password;
 }

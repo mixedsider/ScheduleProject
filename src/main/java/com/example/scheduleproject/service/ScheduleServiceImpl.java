@@ -24,15 +24,15 @@ import java.util.Map;
 public class ScheduleServiceImpl implements ScheduleService{
 
     private final ScheduleRepository scheduleRepository;
-
     private final AuthorService authorService;
 
+    // 날짜 형식
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public ScheduleResponseDto saveSchedule(ScheduleRequestDto requestDto) {
 
-        Long authorId = isPasswordValid(requestDto.getAuthor(), requestDto.getPassword());
+        Long authorId = isPasswordValid(requestDto.getAuthor(), requestDto.getPassword()); // 사용자, 비번으로 조회
 
         ScheduleResponseDto responseDto = scheduleRepository.saveSchedule(new Schedule(requestDto.getTodo(), authorId));
         responseDto.setAuthor(authorService.findAuthorNameById(authorId));
@@ -54,7 +54,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     public Map<String, Object> findSchedulesByUpdatedAt(String updatedAt, int page, int size) {
         Date date;
         try {
-            date = dateFormat.parse(updatedAt);
+            date = dateFormat.parse(updatedAt); // 날짜 형식으로 변경
         } catch (ParseException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This is not the correct format.");
         }
@@ -66,7 +66,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     public Map<String, Object> findSchedulesByAuthorAndUpdatedAt(String author, String updatedAt, int page, int size) {
         Date date;
         try {
-            date = dateFormat.parse(updatedAt);
+            date = dateFormat.parse(updatedAt); // 날짜 형식으로 변경
 
         } catch (ParseException e ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This is not the correct format.");
@@ -77,7 +77,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     @Override
     public ScheduleResponseDto findScheduleById(Long id) {
-        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id); // 일정 조회 및 예외 처리
         ScheduleResponseDto dto = new ScheduleResponseDto(schedule);
         dto.setAuthor(authorService.findAuthorNameById(schedule.getAuthorId()));
         return dto;
@@ -98,7 +98,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 
         updateRow = scheduleRepository.updateTodo(scheduleId, authorId, dto.getTodo());
 
-        if( updateRow == 0 ) {
+        if( updateRow == 0 ) { // 수정된 것이 없다면
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + scheduleId);
         }
 
@@ -116,7 +116,7 @@ public class ScheduleServiceImpl implements ScheduleService{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request.");
         }
 
-        authorId = isPasswordValid(dto.getAuthor(), dto.getPassword());
+        authorId = isPasswordValid(dto.getAuthor(), dto.getPassword()); // 사용자 아이디 가져오기 & 예외 처리
 
         deleteRow = scheduleRepository.deleteSchedule(scheduleId, authorId);
 

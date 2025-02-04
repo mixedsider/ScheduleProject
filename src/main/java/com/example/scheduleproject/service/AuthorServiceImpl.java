@@ -33,8 +33,9 @@ public class AuthorServiceImpl implements AuthorService{
 
     @Override
     public AuthorResponseDto findAuthorById(Long id, AuthorRequestDto dto) {
-
+        // 회원 조회 하면서 유효성 검사
         Author author = authorRepository.findAuthorByIdOrElseThrow(id);
+
         if( author.getPassword().equals(dto.getPassword()) ) {
             return new AuthorResponseDto(author);
         }
@@ -59,20 +60,16 @@ public class AuthorServiceImpl implements AuthorService{
         int updateRow1 = 0;
         int updateRow2 = 0;
 
-        Author author = findAuthorByNameAndPassword(dto.getName(), dto.getPassword());
+        Author author = findAuthorByNameAndPassword(dto.getName(), dto.getPassword()); // 비밀번호 조회
         if( author.getId() != id ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 입력입니다.");
         }
 
         if( dto.getName() != null ) {
-            updateRow1 = authorRepository.updateName(id, dto);
+            updateRow1 = authorRepository.updateName(id, dto); // 이름 수정
         }
         if( dto.getEmail() != null ) {
-            updateRow2 = authorRepository.updateEmail(id, dto);
-        }
-
-        if( updateRow1 == 0 && updateRow2 == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+            updateRow2 = authorRepository.updateEmail(id, dto); // 디메일 수정
         }
 
         return new AuthorResponseDto(author);
@@ -80,7 +77,7 @@ public class AuthorServiceImpl implements AuthorService{
 
     @Override
     public void deleteAuthor(Long id, AuthorRequestDto dto) {
-        Author author = authorRepository.findAuthorByIdOrElseThrow(id);
+        Author author = authorRepository.findAuthorByIdOrElseThrow(id); // 조회 검사
 
         if( !author.getPassword().equals(dto.getPassword()) ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request.");

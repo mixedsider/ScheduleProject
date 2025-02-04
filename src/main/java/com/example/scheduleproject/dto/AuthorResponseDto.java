@@ -7,11 +7,11 @@ import java.sql.Timestamp;
 
 @Getter
 public class AuthorResponseDto {
-    Long id;
-    String name;
-    String email;
-    Timestamp createdAt;
-    Timestamp updatedAt;
+    private Long id;
+    private String name;
+    private String email;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public AuthorResponseDto(Author author) {
         this.id = author.getId();

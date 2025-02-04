@@ -2,14 +2,14 @@ package com.example.scheduleproject.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class ScheduleRequestDto {
     @Size(max = 200)
-    String todo;
+    private String todo;
     @NotNull
-    String author;
+    private String author;
     @NotNull
-    String password;
+    private String password;
 }

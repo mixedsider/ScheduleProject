@@ -30,10 +30,11 @@ public class AuthorRepositoryImpl implements AuthorRepository{
     public AuthorResponseDto join(AuthorRequestDto dto) {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert
-                .withTableName("author")
-                .usingGeneratedKeyColumns("id")
-                .usingColumns("name", "email", "password");
+                .withTableName("author") // 사용할 테이블
+                .usingGeneratedKeyColumns("id") // 기본 키
+                .usingColumns("name", "email", "password"); // 사용하는 컬럼
 
+        //테이블에서 사용할 컬럼 입력
         Map<String, Object> paramaters = new HashMap<>();
         paramaters.put("name", dto.getName());
         paramaters.put("email",dto.getEmail());
@@ -41,6 +42,7 @@ public class AuthorRepositoryImpl implements AuthorRepository{
 
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(paramaters));
 
+        // 조회시 저장이 되어있다면 출력
         Author resultAuthor = findAuthorByIdOrElseThrow(key.longValue());
 
         return new AuthorResponseDto(resultAuthor);
@@ -51,6 +53,7 @@ public class AuthorRepositoryImpl implements AuthorRepository{
         return jdbcTemplate.query("SELECT * FROM author WHERE id = ?", authorRowMapper(), id)
                 .stream().findAny()
                 .orElseThrow(() ->
+                        //없는 데이터 참조 시
                         new NullPointerException("This is not the correct format.")
                 );
     }
@@ -62,6 +65,7 @@ public class AuthorRepositoryImpl implements AuthorRepository{
                 .stream()
                 .findAny()
                 .orElseThrow( () ->
+                        // 회원 정보 잘못 입력
                         new ResponseStatusException(HttpStatus.BAD_REQUEST, "Does not exist name = " + name)
                 );
     }
@@ -72,6 +76,7 @@ public class AuthorRepositoryImpl implements AuthorRepository{
                 .stream()
                 .findAny()
                 .orElseThrow( () ->
+                        // id에서 값이 없는 경우
                         new NullPointerException("Does not exist id = " + authorId)
                 );
 

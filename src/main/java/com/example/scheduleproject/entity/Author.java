@@ -14,12 +14,12 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class Author {
     @Id
-    Long id;
-    String author;
+    private Long id;
+    private String author;
     @Email
-    String email;
+    private String email;
     @NotNull
-    String password;
-    Timestamp createdAt;
-    Timestamp updatedAt;
+    private String password;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 }
