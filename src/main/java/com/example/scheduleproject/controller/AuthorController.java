@@ -3,6 +3,7 @@ package com.example.scheduleproject.controller;
 import com.example.scheduleproject.dto.AuthorRequestDto;
 import com.example.scheduleproject.dto.AuthorResponseDto;
 import com.example.scheduleproject.service.AuthorService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,14 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @PostMapping("/join")
-    public ResponseEntity<AuthorResponseDto> join(@RequestBody(required = true) AuthorRequestDto dto) {
+    public ResponseEntity<AuthorResponseDto> join(@Valid @RequestBody AuthorRequestDto dto) {
         return new ResponseEntity<>(authorService.join(dto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AuthorResponseDto> findAuthorById(
             @PathVariable Long id,
-            @RequestBody AuthorRequestDto dto
+            @Valid @RequestBody AuthorRequestDto dto
     ) {
         return new ResponseEntity<>(authorService.findAuthorById(id, dto), HttpStatus.OK);
     }
@@ -31,7 +32,7 @@ public class AuthorController {
     @PatchMapping("/{id}")
     public ResponseEntity<AuthorResponseDto> updateName(
             @PathVariable Long id,
-            @RequestBody AuthorRequestDto dto
+            @Valid @RequestBody AuthorRequestDto dto
     ) {
         return new ResponseEntity<>(authorService.patchAuthor(id, dto), HttpStatus.OK);
     }

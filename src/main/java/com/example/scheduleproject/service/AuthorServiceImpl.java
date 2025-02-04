@@ -3,6 +3,7 @@ package com.example.scheduleproject.service;
 import com.example.scheduleproject.dto.AuthorRequestDto;
 import com.example.scheduleproject.dto.AuthorResponseDto;
 import com.example.scheduleproject.entity.Author;
+import com.example.scheduleproject.exception.ExControllerAdvice;
 import com.example.scheduleproject.repository.AuthorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,11 @@ public class AuthorServiceImpl implements AuthorService{
         int updateRow1 = 0;
         int updateRow2 = 0;
 
+        Author author = findAuthorByNameAndPassword(dto.getName(), dto.getPassword());
+        if( author.getId() != id ) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 입력입니다.");
+        }
+
         if( dto.getName() != null ) {
             updateRow1 = authorRepository.updateName(id, dto);
         }
@@ -68,8 +74,6 @@ public class AuthorServiceImpl implements AuthorService{
         if( updateRow1 == 0 && updateRow2 == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
         }
-
-        Author author = authorRepository.findAuthorByIdOrElseThrow(id);
 
         return new AuthorResponseDto(author);
     }
