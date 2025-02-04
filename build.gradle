@@ -29,6 +29,8 @@ dependencies {
     // JDBC Template
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 
+    implementation 'org.hibernate:hibernate-validator:6.2.0.Final'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
